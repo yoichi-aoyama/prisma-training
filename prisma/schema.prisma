@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model items {
+  item_id    Int          @id
+  item_name  String?      @db.VarChar(100)
+  user_items user_items[]
+}
+
+model user_items {
+  user_item_id Int    @id
+  user_id      Int?
+  item_id      Int?
+  items        items? @relation(fields: [item_id], references: [item_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_item_id")
+  users        users? @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_id")
+
+  @@index([item_id], map: "fk_item_id")
+  @@index([user_id], map: "fk_user_id")
+}
+
+model users {
+  user_id    Int          @id
+  user_name  String?      @db.VarChar(100)
+  user_items user_items[]
+}
